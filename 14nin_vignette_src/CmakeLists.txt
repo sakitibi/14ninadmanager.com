@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.10)
+project(VignetteEngine)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(
+    ad_engine
+    src/main.cpp
+    src/ad_engine.cpp
+    src/dom_utils.cpp
+    src/ad_data.cpp
+)
+
+# Emscripten特有の設定
+target_link_options(ad_engine PUBLIC
+    "--bind"
+    "-sALLOW_MEMORY_GROWTH=1"
+    "-sMODULARIZE=1"
+    "-sEXPORT_NAME='createVignetteModule'"
+    "-sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']"
+    "-sENVIRONMENT='web'"
+)
+
+set_target_properties(ad_engine PROPERTIES 
+    OUTPUT_NAME "14nin_vignette_v2_main"
+    SUFFIX ".js"
+    LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS}"
+)
