@@ -160,7 +160,7 @@ void AdEngine::playAdVideo() {
     detailsBtn.set("onclick", val::module_property("onDetailsClick"));
 
     val skipBtn = dom::createElement("button", "skipAdButton");
-    val skipBtnInline = dom::createElement("span", "skipAdButtonInline");
+    val skipBtnInline = dom::createElement("span", "skipAdButtonInline", skipBtn);
     skipBtn.set("disabled", true);
     
     val::global().call<void>("startWasmTimer");
