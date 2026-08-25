@@ -6,8 +6,16 @@ namespace dom {
 
     val createElement(const std::string& tag, const std::string& id, val parent) {
         val document = val::global("document");
-        val el = document.call<val>("createElement", val(tag));
         
+        // IDが指定されており、既に要素が存在する場合はその要素を返す
+        if (!id.empty()) {
+            val existingEl = document.call<val>("getElementById", val(id));
+            if (!existingEl.isNull() && !existingEl.isUndefined()) {
+                return existingEl;
+            }
+        }
+
+        val el = document.call<val>("createElement", val(tag));
         if (!id.empty()) {
             el.set("id", val(id));
         }

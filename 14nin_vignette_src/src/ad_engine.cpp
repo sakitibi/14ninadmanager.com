@@ -122,11 +122,25 @@ void AdEngine::pickAd() {
 
 void AdEngine::playAdVideo() {
     if (isAdPlaying) return;
-    isAdPlaying = true;
+
+    val document = val::global("document");
     
+    // 既に adVideoFrame が DOM に存在する場合は新たに作成しない
+    if (!document.call<val>("getElementById", val("adVideoFrame")).isNull()) {
+        js_log("adVideoFrame already exists. Skipping creation.");
+        return;
+    }
+
+    isAdPlaying = true;
     js_log("Starting Ad Playback: " + currentAdData["publisher"].as<std::string>());
 
     dom::injectStyle("https://sakitibi.github.io/elibrary-api/css/86f9642a-eaf9-219b-037c-f5bd248a143d.min.css");
+
+    // 念のため既存の重複要素があればクリーンアップ
+    dom::removeElement("adVideoFrame");
+    dom::removeElement("skipAdButton");
+    dom::removeElement("sponsor-container");
+    dom::removeElement("details-container");
 
     val iframe = dom::createElement("iframe", "adVideoFrame");
     std::string fullSrc = currentAdData["src"].as<std::string>();
