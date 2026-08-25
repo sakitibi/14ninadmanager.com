@@ -22,7 +22,6 @@
                 let tried = 0;
                 const src = url.searchParams.get("src");
                 async function fetched(){
-                    tried++;
                     try{
                         /*const res1 = await fetch(JSON_URL[0], {
                             method: "POST",
@@ -76,6 +75,7 @@
                         console.warn("videoFlagがfalseです!");
                         selectsArrayGetItem();
                         setTimeout(() => {
+                            tried++;
                             if (tried > 10) return;
                             isVideoFlag();
                         }, 100);
