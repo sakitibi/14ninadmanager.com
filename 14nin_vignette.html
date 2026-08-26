@@ -51,9 +51,6 @@
                     } finally {
                         if(selects.length){
                             document.getElementById("api-status").innerText = "API STATUS 200 OK";
-                        } else if (tried > 10){
-                            document.getElementById("api-status").innerText = `API STATUS 400 BAD REQUEST ${src}`;
-                            return;
                         }
                     }
                 }
@@ -76,7 +73,10 @@
                         selectsArrayGetItem();
                         setTimeout(() => {
                             tried++;
-                            if (tried > 10) return;
+                            if (tried > 10) {
+                                document.getElementById("api-status").innerText = `API STATUS 400 BAD REQUEST ${src}`;
+                                return;
+                            };
                             isVideoFlag();
                         }, 100);
                     }
