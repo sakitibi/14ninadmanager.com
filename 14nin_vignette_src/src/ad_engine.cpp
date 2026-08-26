@@ -40,7 +40,7 @@ void AdEngine::setMetadata(val srcs, val times) {
 }
 
 void AdEngine::updateInterval() {
-    // 1. 再生フラグが折れていれば何もしない
+    // 再生フラグが折れていれば何もしない
     if (!isAdPlaying) return;
 
     val document = val::global("document");
@@ -65,17 +65,12 @@ void AdEngine::updateInterval() {
 
     // --- 判定ロジック ---
     
-    // 2. 全ての要素が消えている場合
-    // skipButtonClick によって意図的に消されたと判断する。
-    // フラグを折って、これ以上の監視（再描画）を止める。
     if (missingCount == (int)targetIds.size()) {
         js_log("All elements cleared. Monitoring stopped.");
         isAdPlaying = false; 
         return;
     }
 
-    // 3. 一部の要素だけが消えている場合 (1つ以上、4つ未満)
-    // アドブロック等による部分的な削除とみなし、再描画を行う。
     js_log("Partial element loss detected! Recovering ad...");
     isAdPlaying = false; 
     playAdVideo();
@@ -114,7 +109,7 @@ void AdEngine::pickAd() {
     currentAdData.set("publisher", val(choice.publisher));
     currentAdData.set("site", val(choice.site));
     
-    bool adFlag = (static_cast<int>(val::global("Math").call<double>("random") * 11) == 10);
+    bool adFlag = (static_cast<int>(val::global("Math").call<double>("random") * 6) == 5);
     currentAdData.set("adFlag", adFlag);
 
     js_log("Ad Picked: " + choice.publisher + (adFlag ? " [FLAGGED]" : " [NOT FLAGGED]"));
