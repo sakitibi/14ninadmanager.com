@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <random>
 #include <iostream>
 
 using namespace emscripten;
@@ -98,7 +99,11 @@ void AdEngine::pickAd() {
         return;
     }
 
-    double rnd = val::global("Math").call<double>("random");
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+
+    double rnd = dist(eng);
     int idx = static_cast<int>(rnd * selects.size());
     AdChoice choice = selects[idx];
 
@@ -129,34 +134,20 @@ void AdEngine::playAdVideo() {
     isAdPlaying = true;
     js_log("Starting Ad Playback: " + currentAdData["publisher"].as<std::string>());
 
-    dom::injectStyle("https://sakitibi.github.io/elibrary-api/css/86f9642a-eaf9-219b-037c-f5bd248a143d.min.css");
+    dom::domUtils::injectStyle("https://sakitibi.github.io/elibrary-api/css/86f9642a-eaf9-219b-037c-f5bd248a143d.min.css");
 
     // 念のため既存の重複要素があればクリーンアップ
-    dom::removeElement("adVideoFrame");
-    dom::removeElement("skipAdButton");
-    dom::removeElement("sponsor-container");
-    dom::removeElement("details-container");
+    dom::domUtils::removeElement("adVideoFrame");
+    dom::domUtils::removeElement("skipAdButton");
+    dom::domUtils::removeElement("sponsor-container");
+    dom::domUtils::removeElement("details-container");
 
-    val iframe = dom::createElement("iframe", "adVideoFrame");
+    val iframe = dom::domUtils::createElement("iframe", "adVideoFrame");
     std::string fullSrc = currentAdData["src"].as<std::string>();
     std::string ytId = fullSrc.substr(fullSrc.find_last_of('/') + 1);
     iframe.set("src", val("https://sakitibi.github.io/14ninadmanager.com/14nin_vignette?src=" + ytId));
 
-    val detailsContainer = dom::createElement("div", "details-container");
-    val detailsBtn = dom::createElement("button", "detailsButton", detailsContainer);
-    val detailsSpan = dom::createElement("span", "detailsButtonInline", detailsBtn);
-    dom::setText(detailsSpan, "詳細を開く");
-
-    val sponsor = dom::createElement("div", "sponsor-container");
-    val sponsorRow = dom::createElement("p", "sponsor-row", sponsor);
-    val sponsorInline = dom::createElement("span", "sponsor-inline", sponsorRow);
-    dom::setText(sponsorInline, "スポンサー提供: " + currentAdData["publisher"].as<std::string>());
-    
-    detailsBtn.set("onclick", val::module_property("onDetailsClick"));
-
-    val skipBtn = dom::createElement("button", "skipAdButton");
-    val skipBtnInline = dom::createElement("span", "skipAdButtonInline", skipBtn);
-    skipBtn.set("disabled", true);
+    dom::domUtils::AdDescElementCreate(currentAdData);
     
     val::global().call<void>("startWasmTimer");
 }
@@ -164,10 +155,10 @@ void AdEngine::playAdVideo() {
 void AdEngine::skipButtonClick() {
     js_log("Skip button clicked. Cleaning up.");
     isAdPlaying = false;
-    dom::removeElement("adVideoFrame");
-    dom::removeElement("skipAdButton");
-    dom::removeElement("sponsor-container");
-    dom::removeElement("details-container");
+    dom::domUtils::removeElement("adVideoFrame");
+    dom::domUtils::removeElement("skipAdButton");
+    dom::domUtils::removeElement("sponsor-container");
+    dom::domUtils::removeElement("details-container");
     
     long long now = val::global("Date").call<val>("now").as<long long>();
     val::global("localStorage").call<void>("setItem", val("lastAdShown"), val(std::to_string(now)));
