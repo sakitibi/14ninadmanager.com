@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <chrono>
 #include <iostream>
 
 using namespace emscripten;
@@ -99,8 +100,9 @@ void AdEngine::pickAd() {
         return;
     }
 
-    std::random_device rd;
-    std::default_random_engine eng(rd());
+    unsigned long long seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+
+    std::default_random_engine eng(seed);
     std::uniform_real_distribution<double> dist(0.0, 1.0);
 
     double rnd = dist(eng);
