@@ -48,10 +48,6 @@
                         selects = srcArray;
                     } catch(e) {
                         console.error("fetchエラー: ", e);
-                    } finally {
-                        if(selects.length){
-                            document.getElementById("api-status").innerText = "API STATUS 200 OK";
-                        }
                     }
                 }
                 function adGenerate(){
@@ -86,6 +82,7 @@
                         if(selects[i] === src){
                             videoFlag = true;
                             i = selects.length;
+                            document.getElementById("api-status").innerText = "API STATUS 200 OK";
                         }
                     }
                 }
