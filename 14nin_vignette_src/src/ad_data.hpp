@@ -2,7 +2,6 @@
 #define AD_DATA_HPP
 
 #include <vector>
-#include <string>
 
 struct Meta {
     std::string pub;
